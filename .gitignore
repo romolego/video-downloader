@@ -1,0 +1,13 @@
+.venv/
+data/
+downloads/
+logs/
+run/
+vendor/
+node_modules/
+__pycache__/
+*.py[cod]
+*.log
+*.pid
+.playwright-cli/
+output/

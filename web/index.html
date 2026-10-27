@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Локальный загрузчик</title><link rel="icon" type="image/svg+xml" href="/assets/icon.svg"><link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Главная"><span class="brand-icon">↓</span><span>Загрузчик<small>Ваша локальная медиатека</small></span></a>
+    <button class="primary wide" id="add-download">＋ Скачать по ссылке</button>
+    <nav id="navigation" aria-label="Библиотека"></nav>
+    <div class="sidebar-label">ПАПКИ <button class="icon" id="add-folder" title="Создать папку" aria-label="Создать папку">＋</button></div>
+    <div id="folders"></div>
+    <div class="sidebar-bottom"><button class="nav-item" id="settings-button">⚙ Настройки</button><button class="nav-item" id="open-root">↗ Папка загрузок</button><div class="local-note"><i></i> Всё хранится на компьютере</div></div>
+  </aside>
+  <main>
+    <header><div class="eyebrow">ЛОКАЛЬНЫЙ ЗАГРУЗЧИК</div><div class="header-row"><h1 id="page-title">Все проекты</h1><div class="header-actions"><span class="service" id="service-status"><i></i> Сервис работает</span><button class="quiet" id="stop-service" title="Остановить сервис с сохранением докачки">Остановить</button></div></div><p id="page-subtitle">Скачивайте записи. Собирайте их в проекты. Используйте где угодно.</p></header>
+    <div id="overview" class="overview"></div>
+    <div class="toolbar"><label class="search"><span>⌕</span><input id="search" placeholder="Найти проект или запись" aria-label="Поиск"></label><select id="status-filter" aria-label="Фильтр загрузок"><option value="all">Все статусы</option><option value="active">В работе</option><option value="completed">Готово</option><option value="paused">На паузе</option><option value="error">С ошибкой</option></select><button id="select-projects">Выбрать</button><button id="new-project">＋ Проект</button></div>
+    <div id="selection-bar" hidden></div><div id="content" aria-live="polite"></div>
+    <footer>YouTube · RuTube · VK · Яндекс.Диск · Google Drive · Zoom</footer>
+  </main>
+  <dialog id="download-dialog" class="large-dialog"><form id="download-form">
+    <div class="dialog-heading"><div><div class="eyebrow">НОВАЯ ЗАГРУЗКА</div><h2>Скачать по ссылке</h2></div><button type="button" class="icon close" aria-label="Закрыть">×</button></div>
+    <p class="muted">Проверьте ссылку, выберите качество и добавьте запись в проект.</p>
+    <label>Ссылка на запись<input name="url" type="url" required placeholder="https://…" autocomplete="off"></label>
+    <label id="passcode-label" hidden>Код доступа Zoom<input name="passcode" autocomplete="off" type="password"></label>
+    <button type="button" id="probe-button" class="wide">Проверить ссылку</button>
+    <div id="probe-result" class="probe-result" hidden></div>
+    <div class="form-grid"><label>Что скачать<select name="mode"><option value="video">Видео со звуком</option><option value="audio">Только аудио</option></select></label><label>Качество<select name="quality"></select></label></div>
+    <label>Проект<div class="input-row"><select name="project_id"></select><button type="button" id="create-project-inline">＋ Создать проект</button></div></label>
+    <div id="new-project-fields" class="form-grid"><label>Название нового проекта<input name="project_name" placeholder="Название записи" maxlength="180"></label><label>Папка проектов<div class="input-row"><select name="folder_id"></select><button type="button" id="create-folder-inline">＋ Новая папка</button></div></label></div>
+    <p class="form-error" id="download-error" role="alert"></p><div class="dialog-actions"><button type="button" class="close">Отмена</button><button type="submit" class="primary" id="download-submit">Добавить в очередь</button></div>
+  </form></dialog>
+  <dialog id="settings-dialog" class="large-dialog"><form id="settings-form">
+    <div class="dialog-heading"><h2>Настройки загрузчика</h2><button type="button" class="icon close" aria-label="Закрыть">×</button></div>
+    <h3>Скачивание по умолчанию</h3><div class="form-grid"><label>Режим<select name="download_mode"><option value="video">Видео со звуком</option><option value="audio">Только аудио</option></select></label><label>Качество видео<select name="download_quality"><option value="360">360p</option><option value="480">480p</option><option value="720">720p</option><option value="1080">1080p</option><option value="1440">1440p</option><option value="2160">2160p / 4K</option><option value="max">Максимальное</option></select></label></div>
+    <label>Одновременных загрузок<select name="max_parallel"><option value="1">1 — последовательно</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
+    <h3>Хранение и проекты</h3><label>Папка для новых проектов<div class="input-row"><input name="download_root" required><button type="button" id="pick-root">Выбрать…</button></div></label><p class="hint">У существующих проектов остаётся прежний путь. Паузы и докачка сохраняются.</p>
+    <div class="form-grid"><label>Название проекта<select name="project_name_format"><option value="date_title">ГГГГ - ММ - ДД - Название</option><option value="date_compact">ГГГГ-ММ-ДД — Название</option><option value="date_dotted">ДД.ММ.ГГГГ — Название</option><option value="date_time_title">Дата, время и название</option><option value="title_date">Название — Дата</option><option value="title_only">Только название</option></select></label><label>Вид библиотеки<select name="project_view"><option value="folders">Группы по папкам</option><option value="flat">Общая лента</option></select></label></div>
+    <h3>Подключение к YouTube</h3><label>Способ подключения<select name="youtube_connection"><option value="direct">Прямое подключение</option><option value="proxy">Свой прокси</option></select></label>
+    <label>Адрес своего прокси<input name="youtube_proxy" placeholder="http://127.0.0.1:7890 или socks5://127.0.0.1:1080" autocomplete="off"></label><p class="hint">VPN или прокси-расширение только в браузере не подключает загрузчик автоматически. Можно использовать локальный прокси VPN-программы либо VPN для всего компьютера.</p>
+    <h3>Аккаунт YouTube</h3><label>Cookies из браузера<select name="youtube_cookies"><option value="off">Выключено</option><option value="auto">Найти автоматически</option><option value="firefox">Firefox</option><option value="chrome">Chrome</option><option value="edge">Edge</option><option value="opera">Opera</option><option value="brave">Brave</option><option value="vivaldi">Vivaldi</option><option value="chromium">Chromium</option></select></label><p class="hint">Если YouTube просит войти, можно использовать cookies.txt в формате Netscape. В папке лежит инструкция. Доступность cookies браузера зависит от его защиты.</p><button type="button" id="open-cookies">Открыть папку cookies</button>
+    <h3>Компоненты</h3><div id="diagnostics" class="diagnostics"></div><p class="hint">Для обновления YouTube-компонентов запустите «Обновить загрузчик.bat» из папки программы.</p>
+    <label>Тема<select name="theme"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></label>
+    <p class="form-error" id="settings-error" role="alert"></p><div class="dialog-actions"><button type="button" class="close">Отмена</button><button class="primary" type="submit">Сохранить настройки</button></div>
+  </form></dialog>
+  <dialog id="text-dialog"><form id="text-form"><h2 id="text-title"></h2><label id="text-label">Название<input id="text-value" required maxlength="180"></label><div class="dialog-actions"><button class="close" type="button">Отмена</button><button type="submit" class="primary">Сохранить</button></div></form></dialog>
+  <dialog id="delete-dialog"><h2 id="delete-title"></h2><p>Удалить только из библиотеки или также удалить файлы с диска?</p><div class="delete-options"><button id="delete-keep">Убрать из библиотеки, оставить файлы</button><button class="danger" id="delete-files">Удалить вместе с файлами</button><button class="close">Отмена</button></div></dialog>
+  <dialog id="player-dialog" class="large-dialog"><div class="dialog-heading"><h2 id="player-title">Запись</h2><button class="icon close" aria-label="Закрыть">×</button></div><video id="player" controls preload="metadata"></video><p class="hint">Некоторые кодеки браузер не воспроизводит. Файл можно открыть через папку проекта.</p></dialog>
+  <div id="toast" role="status" hidden></div><script src="/assets/app.js" defer></script>
+</body></html>
