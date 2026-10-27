@@ -66,7 +66,7 @@ class SoundSelectionTests(unittest.TestCase):
     def test_original_file_without_codec_metadata_is_not_falsely_rejected_as_silent(self):
         info = {"title":"original.mp4", "formats":[
             {"format_id":"source", "url":"https://files.example.test/video.mp4", "ext":"mp4"}]}
-        with patch.object(engine, "_extract", return_value=info):
+        with patch.object(engine, "_extract", return_value=info), patch.object(engine, "preferred_quality", return_value="720"):
             result = engine.probe_metadata("https://disk.360.yandex.ru/i/unknown-codecs")
         self.assertIsNone(result["audio_available"])
         self.assertEqual(result["qualities"], [])
