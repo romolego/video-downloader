@@ -19,12 +19,12 @@ function Get-ServiceHealth {
 function Find-DownloaderPython {
     $launcher = Get-Command py.exe -ErrorAction SilentlyContinue
     if ($launcher) {
-        $candidate = & $launcher.Source -3 -c "import sys; assert sys.version_info >= (3, 11); print(sys.executable)" 2>$null
+        $candidate = & $launcher.Source -3 -c "import sys; ok = sys.version_info >= (3, 11); print(sys.executable) if ok else None; sys.exit(0 if ok else 1)" 2>$null
         if ($LASTEXITCODE -eq 0 -and $candidate) { return ($candidate | Select-Object -Last 1).Trim() }
     }
     $pythonCommand = Get-Command python.exe -ErrorAction SilentlyContinue
     if ($pythonCommand -and $pythonCommand.Source -notlike '*\Microsoft\WindowsApps\*') {
-        $candidate = & $pythonCommand.Source -c "import sys; assert sys.version_info >= (3, 11); print(sys.executable)" 2>$null
+        $candidate = & $pythonCommand.Source -c "import sys; ok = sys.version_info >= (3, 11); print(sys.executable) if ok else None; sys.exit(0 if ok else 1)" 2>$null
         if ($LASTEXITCODE -eq 0 -and $candidate) { return ($candidate | Select-Object -Last 1).Trim() }
     }
     return $null
